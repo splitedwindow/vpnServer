@@ -25,6 +25,23 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER_NAME }}@${{ secrets.SSH_SERVER_IP }} <<'EOF'
           cd diplomavpn
           git fetch origin main
-            git reset --hard origin/main
-            
+          git reset --hard origin/main
+
+          # Stop all services
+          docker-compose down
+ 
+          # Rebuild and start services
+          docker-compose up -d --build
+ 
+          # Wait for services to be healthy
+          sleep 10
+ 
+          # Verify deployment
+          docker-compose ps
+          docker logs --tail 20 freeradius
+          docker logs --tail 20 radius_backend
+ 
+          # Check backend health
+          curl -f http://localhost:3000/health || echo "Warning: Backend health check failed"
+          
           EOF
