@@ -56,32 +56,32 @@ services:
     depends_on:
       - mysql
 
-  backend:
-    build: ./backend
-    container_name: radius_backend
-    environment:
-      NODE_ENV: development
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: radius
-      DB_PASSWORD: radiuspassword
-      DB_NAME: radius
-      PORT: 3000
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    networks:
-      - radius_network
-    depends_on:
-      mysql:
-        condition: service_healthy
-    command: npm run dev
+#   backend:
+#     build: ./backend
+#     container_name: radius_backend
+#     environment:
+#       NODE_ENV: development
+#       DB_HOST: mysql
+#       DB_PORT: 3306
+#       DB_USER: radius
+#       DB_PASSWORD: radiuspassword
+#       DB_NAME: radius
+#       PORT: 3000
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - ./backend:/app
+#       - /app/node_modules
+#     networks:
+#       - radius_network
+#     depends_on:
+#       mysql:
+#         condition: service_healthy
+#     command: npm run dev
 
-networks:
-  radius_network:
-    driver: bridge
+# networks:
+#   radius_network:
+#     driver: bridge
 
-volumes:
-  mysql_data:
+# volumes:
+#   mysql_data:
