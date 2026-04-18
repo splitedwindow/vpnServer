@@ -453,17 +453,3 @@ docker-compose restart phpmyadmin
 ## 📄 License
 
 This is a diploma/educational project. Use at your own risk.
-
-## 🤝 Contributing
-
-This is a learning project. Feel free to experiment and modify as needed for your diploma requirements.
-
----
-
-**Next Steps:**
-1. ✅ Start the stack: `docker-compose up -d`
-2. ✅ Test RADIUS: `radtest testuser testpass localhost 1812 testing123`
-3. ✅ Explore API: `curl http://localhost:3000/api/users`
-4. ✅ View database: Open `http://localhost:8080` in browser
-5. 🔜 Configure your MikroTik router
-6. 🔜 Build your frontend dashboard
