@@ -1,16 +1,10 @@
 #!/bin/sh
 set -e
 
-# Wait for MySQL to be ready
+# Wait for MySQL to be ready (simple sleep approach)
 echo "Waiting for MySQL to be ready..."
-until nc -z mysql 3306; do
-    echo "MySQL is unavailable - sleeping"
-    sleep 2
-done
-echo "MySQL is up - continuing"
-
-# Additional wait to ensure MySQL is fully initialized
-sleep 5
+sleep 15
+echo "MySQL should be up - continuing"
 
 # Enable SQL module by creating symlink
 if [ ! -L /etc/freeradius/mods-enabled/sql ]; then
