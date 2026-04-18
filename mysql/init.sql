@@ -139,9 +139,7 @@ CREATE TABLE IF NOT EXISTS nas (
 INSERT INTO radcheck (username, attribute, op, value) VALUES
 ('testuser', 'Cleartext-Password', ':=', 'testpass');
 
--- Insert sample VPN group configuration
-INSERT INTO radgroupcheck (groupname, attribute, op, value) VALUES
-('vpn_users', 'Auth-Type', ':=', 'Accept');
+-- Insert sample VPN group configuration (no Auth-Type override - let FreeRADIUS handle mschap)
 
 INSERT INTO radgroupreply (groupname, attribute, op, value) VALUES
 ('vpn_users', 'Framed-Protocol', ':=', 'PPP'),
