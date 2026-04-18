@@ -39,9 +39,7 @@ jobs:
           # Verify deployment
           docker-compose ps
           docker logs --tail 20 freeradius
-          docker logs --tail 20 radius_backend
- 
-          # Check backend health
-          curl -f http://localhost:3000/health || echo "Warning: Backend health check failed"
+          
+          echo "Deployment complete!"
           
           EOF

@@ -79,9 +79,9 @@ services:
 #         condition: service_healthy
 #     command: npm run dev
 
-# networks:
-#   radius_network:
-#     driver: bridge
+networks:
+  radius_network:
+    driver: bridge
 
-# volumes:
-#   mysql_data:
+volumes:
+  mysql_data:
