@@ -12,9 +12,9 @@ client docker_network {
 	nas_type = other
 }
 
-client mikrotik_local {
-	ipaddr = 192.168.88.0/24
-	secret = your-secret-here
+client mikrotik_production {
+	ipaddr = YOUR_MIKROTIK_IP
+	secret = YOUR_RADIUS_SECRET
 	shortname = mikrotik
 	nas_type = mikrotik
 }

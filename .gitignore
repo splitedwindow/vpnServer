@@ -42,6 +42,8 @@ temp/
 *.tmp
 *.bak
 
-# Production secrets (keep templates)
-# freeradius/clients.conf  # Uncomment if you want to ignore production secrets
-# docker-compose.yml       # Uncomment for production-specific configs
+# Production secrets (use templates instead)
+freeradius/clients.conf
+
+# Keep templates for reference
+!freeradius/clients.conf.template
