@@ -66,7 +66,6 @@ function applyState(state, message) {
 
   } else {
     isConnected = false;
-    statusDot.classList.add('');
     shieldFill.setAttribute('fill', 'url(#gDisc)');
     iconLock.setAttribute('opacity',  '1');
     iconCheck.setAttribute('opacity', '0');
@@ -85,11 +84,19 @@ mainBtn.addEventListener('click', async () => {
   if (!isConnected) {
     addLog('Initiating connection...');
     const res = await window.vpn.connect();
-    if (!res.success) addLog(res.error, true);
+    if (!res.success) {
+      addLog(res.error, true);
+      applyState('Disconnected');
+    }
   } else {
     addLog('Disconnecting...');
     const res = await window.vpn.disconnect();
-    if (!res.success) addLog(res.error, true);
+    if (res.success) {
+      applyState('Disconnected', 'Disconnected from VPN');
+    } else {
+      addLog(res.error, true);
+      applyState('Disconnected');
+    }
   }
 
   isBusy = false;
