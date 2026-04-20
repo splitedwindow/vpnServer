@@ -38,9 +38,9 @@ function applyState(state, message) {
     shieldFill.setAttribute('fill', 'url(#gConn)');
     iconLock.setAttribute('opacity',  '0');
     iconCheck.setAttribute('opacity', '1');
-    statusMain.textContent = 'Connected';
-    statusSub.textContent  = 'Your traffic is protected';
-    mainBtn.textContent    = 'Disconnect';
+    statusMain.textContent = 'Підключено';
+    statusSub.textContent  = 'Ваш трафік захищено';
+    mainBtn.textContent    = 'Відключитись';
     mainBtn.classList.add('connected');
 
   } else if (state === 'Connecting') {
@@ -50,17 +50,17 @@ function applyState(state, message) {
     shieldFill.setAttribute('fill', 'url(#gDisc)');
     iconLock.setAttribute('opacity',  '1');
     iconCheck.setAttribute('opacity', '0');
-    statusMain.textContent = 'Connecting…';
-    statusSub.textContent  = message || 'Please wait';
-    mainBtn.textContent    = 'Connecting…';
+    statusMain.textContent = 'Підключення…';
+    statusSub.textContent  = message || 'Зачекайте будь ласка';
+    mainBtn.textContent    = 'Підключення…';
     mainBtn.disabled       = true;
     mainBtn.classList.remove('connected');
 
   } else if (state === 'Disconnecting') {
     statusDot.classList.add('connecting');
-    statusMain.textContent = 'Disconnecting…';
-    statusSub.textContent  = 'Please wait';
-    mainBtn.textContent    = 'Disconnecting…';
+    statusMain.textContent = 'Відключення…';
+    statusSub.textContent  = 'Зачекайте будь ласка';
+    mainBtn.textContent    = 'Відключення…';
     mainBtn.disabled       = true;
     mainBtn.classList.remove('connected');
 
@@ -69,9 +69,9 @@ function applyState(state, message) {
     shieldFill.setAttribute('fill', 'url(#gDisc)');
     iconLock.setAttribute('opacity',  '1');
     iconCheck.setAttribute('opacity', '0');
-    statusMain.textContent = 'Disconnected';
-    statusSub.textContent  = 'Not connected to VPN';
-    mainBtn.textContent    = 'Connect';
+    statusMain.textContent = 'Відключено';
+    statusSub.textContent  = 'Не підключено до VPN';
+    mainBtn.textContent    = 'Підключитись';
     mainBtn.disabled       = false;
     mainBtn.classList.remove('connected');
   }
@@ -82,17 +82,17 @@ mainBtn.addEventListener('click', async () => {
   isBusy = true;
 
   if (!isConnected) {
-    addLog('Initiating connection...');
+    addLog('Ініціалізація підключення...');
     const res = await window.vpn.connect();
     if (!res.success) {
       addLog(res.error, true);
       applyState('Disconnected');
     }
   } else {
-    addLog('Disconnecting...');
+    addLog('Відключення...');
     const res = await window.vpn.disconnect();
     if (res.success) {
-      applyState('Disconnected', 'Disconnected from VPN');
+      applyState('Disconnected', 'Відключено від VPN');
     } else {
       addLog(res.error, true);
       applyState('Disconnected');
@@ -110,9 +110,9 @@ window.vpn.onState(({ state, message }) => {
 window.vpn.getStatus().then(({ status }) => {
   if (status === 'Connected') {
     applyState('Connected');
-    addLog('VPN already connected');
+    addLog('VPN вже підключено');
   } else {
     applyState('Disconnected');
-    addLog('Ready to connect');
+    addLog('Готово до підключення');
   }
 });

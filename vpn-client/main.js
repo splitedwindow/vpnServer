@@ -71,7 +71,7 @@ function runRasDial(args) {
 
 ipcMain.handle('vpn:connect', async () => {
   try {
-    sendState('Connecting', 'Setting up VPN profile...');
+    sendState('Connecting', 'Налаштування VPN профілю...');
 
     await runPS(`
 $conn = Get-VpnConnection -Name '${VPN_NAME}' -ErrorAction SilentlyContinue
@@ -88,10 +88,10 @@ if (-not $conn) {
 }
 `);
 
-    sendState('Connecting', 'Establishing connection...');
+    sendState('Connecting', 'Встановлення з\'єднання...');
     await runRasDial([VPN_NAME, VPN_USER, VPN_PASS]);
 
-    sendState('Connected', 'Connected to VPN');
+    sendState('Connected', 'Підключено до VPN');
     return { success: true };
   } catch (err) {
     sendState('Disconnected', err.message);
@@ -101,12 +101,12 @@ if (-not $conn) {
 
 ipcMain.handle('vpn:disconnect', async () => {
   try {
-    sendState('Disconnecting', 'Disconnecting...');
+    sendState('Disconnecting', 'Відключення...');
     await runRasDial([VPN_NAME, '/disconnect']);
-    sendState('Disconnected', 'Disconnected from VPN');
+    sendState('Disconnected', 'Відключено від VPN');
     return { success: true };
   } catch (err) {
-    sendState('Disconnected', 'Disconnected');
+    sendState('Disconnected', 'Відключено');
     return { success: false, error: err.message };
   }
 });
