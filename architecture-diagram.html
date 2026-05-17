@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архітектура VPN системи</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #2a2a2a;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 28px;
+        }
+
+        .diagram {
+            position: relative;
+            width: 100%;
+            height: 600px;
+        }
+
+        .box {
+            position: absolute;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 2px solid;
+        }
+
+        .box-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .box-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Кольорові схеми для боксів */
+        .box-brown {
+            background: linear-gradient(135deg, #8B5A3C 0%, #A0644E 100%);
+            border-color: #C17A5C;
+            color: #fff;
+        }
+
+        .box-blue {
+            background: linear-gradient(135deg, #1E5A96 0%, #2B7CB5 100%);
+            border-color: #3B9FD9;
+            color: #fff;
+        }
+
+        .box-green {
+            background: linear-gradient(135deg, #2D7A5C 0%, #3D9B6F 100%);
+            border-color: #4DB88F;
+            color: #fff;
+        }
+
+        .box-purple {
+            background: linear-gradient(135deg, #5B4B8A 0%, #7B6BA8 100%);
+            border-color: #9B8BC8;
+            color: #fff;
+        }
+
+        .box-orange {
+            background: linear-gradient(135deg, #A0662D 0%, #C17A3C 100%);
+            border-color: #E89A4C;
+            color: #fff;
+        }
+
+        /* Позиціонування боксів */
+        .frontend {
+            top: 80px;
+            left: 50px;
+            width: 200px;
+        }
+
+        .backend {
+            top: 80px;
+            left: 350px;
+            width: 200px;
+        }
+
+        .database {
+            top: 80px;
+            right: 50px;
+            width: 200px;
+        }
+
+        .mikrotik {
+            bottom: 120px;
+            left: 280px;
+            width: 200px;
+        }
+
+        .freeradius {
+            bottom: 120px;
+            left: 550px;
+            width: 200px;
+        }
+
+        .client {
+            bottom: 120px;
+            left: 50px;
+            width: 200px;
+        }
+
+        .internet {
+            bottom: 120px;
+            right: 50px;
+            width: 200px;
+        }
+
+        .vps-label {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            opacity: 0.7;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .virtual-server {
+            position: absolute;
+            top: 50px;
+            left: 280px;
+            right: 50px;
+            height: 420px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .virtual-server-label {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* Лінії з'єднання */
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .legend {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-line {
+            width: 30px;
+            height: 2px;
+            background: #fff;
+        }
+
+        .legend-dashed {
+            background: none;
+            border-top: 2px dashed rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Архітектура VPN системи</h1>
+        
+        <div class="diagram">
+            <div class="vps-label">VPS</div>
+            
+            <div class="virtual-server">
+                <div class="virtual-server-label">Віртуальний сервер</div>
+            </div>
+
+            <!-- Верхній рівень -->
+            <div class="box box-brown frontend">
+                <div class="box-title">Веб-сайт</div>
+                <div class="box-subtitle">React · реєстрація</div>
+            </div>
+
+            <div class="box box-brown backend">
+                <div class="box-title">Бекенд</div>
+                <div class="box-subtitle">Node.js · підписки</div>
+            </div>
+
+            <div class="box box-orange database">
+                <div class="box-title">MySQL</div>
+                <div class="box-subtitle">База даних</div>
+            </div>
+
+            <!-- Нижній рівень -->
+            <div class="box box-blue client">
+                <div class="box-title">Користувач</div>
+                <div class="box-subtitle">Electron-клієнт</div>
+            </div>
+
+            <div class="box box-green mikrotik">
+                <div class="box-title">MikroTik</div>
+                <div class="box-subtitle">VPN-шлюз · AES-256</div>
+            </div>
+
+            <div class="box box-purple freeradius">
+                <div class="box-title">FreeRADIUS</div>
+                <div class="box-subtitle">Аутентифікація</div>
+            </div>
+
+            <div class="box box-brown internet">
+                <div class="box-title">Інтернет</div>
+                <div class="box-subtitle">Вихід: 🟡 UA IP</div>
+            </div>
+
+            <!-- SVG для ліній -->
+            <svg viewBox="0 0 1200 600" preserveAspectRatio="none">
+                <!-- Frontend to Backend -->
+                <line x1="250" y1="130" x2="350" y2="130" stroke="#fff" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="290" y="120" fill="#fff" font-size="12" text-anchor="middle">REST API</text>
+
+                <!-- Backend to Database -->
+                <line x1="550" y1="130" x2="950" y2="130" stroke="#fff" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="750" y="120" fill="#fff" font-size="12" text-anchor="middle">SQL</text>
+
+                <!-- Frontend to MikroTik -->
+                <path d="M 150 280 Q 250 350 380 350" stroke="#fff" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="250" y="340" fill="#fff" font-size="12" text-anchor="middle">L2TP/IPsec</text>
+
+                <!-- Client to MikroTik -->
+                <line x1="150" y1="420" x2="280" y2="420" stroke="#fff" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- MikroTik to FreeRADIUS -->
+                <line x1="480" y1="420" x2="550" y2="420" stroke="#fff" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="515" y="410" fill="#fff" font-size="12" text-anchor="middle">RADIUS</text>
+
+                <!-- FreeRADIUS to Database -->
+                <line x1="750" y1="420" x2="950" y2="280" stroke="#fff" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="870" y="350" fill="#fff" font-size="12" text-anchor="middle">Дозволено</text>
+
+                <!-- MikroTik to Internet -->
+                <path d="M 380 480 Q 500 520 950 480" stroke="#fff" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+                <!-- Backend to MikroTik (дашед) -->
+                <line x1="450" y1="280" x2="380" y2="350" stroke="#fff" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+                <text x="400" y="310" fill="#fff" font-size="12" text-anchor="middle">Відповідь</text>
+
+                <!-- Стрілка -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#fff" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="legend">
+            <div class="legend-title">Легенда:</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-line"></div>
+                    <span>Запит</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line legend-dashed"></div>
+                    <span>Відповідь</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
