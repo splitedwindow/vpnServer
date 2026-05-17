@@ -134,6 +134,21 @@ CREATE TABLE IF NOT EXISTS nas (
   KEY nasname (nasname)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Table structure for table 'subscriptions'
+-- Tracks user subscription plans and expiry
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  username VARCHAR(64) NOT NULL,
+  plan VARCHAR(32) NOT NULL DEFAULT 'basic',
+  started_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY username (username),
+  KEY expires_at (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Insert sample test user
 -- Username: testuser, Password: testpass
 INSERT INTO radcheck (username, attribute, op, value) VALUES
@@ -148,6 +163,16 @@ INSERT INTO radgroupreply (groupname, attribute, op, value) VALUES
 -- Assign test user to VPN group
 INSERT INTO radusergroup (username, groupname, priority) VALUES
 ('testuser', 'vpn_users', 1);
+
+-- Insert sample subscription for testuser (expires in 30 days)
+INSERT INTO subscriptions (username, plan, started_at, expires_at, is_active) VALUES
+('testuser', 'basic', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 1);
+
+-- Set FreeRADIUS Expiration attribute so built-in expiration module blocks expired users
+-- Format: 'MMM DD YYYY HH:MM:SS' (e.g. 'Jun 01 2025 23:59:59')
+-- This is managed automatically by the backend when subscriptions are created/renewed
+INSERT INTO radcheck (username, attribute, op, value) VALUES
+('testuser', 'Expiration', ':=', DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 30 DAY), '%b %d %Y 23:59:59'));
 
 -- Insert sample NAS (MikroTik router) - update IP and secret later
 INSERT INTO nas (nasname, shortname, type, ports, secret, description) VALUES

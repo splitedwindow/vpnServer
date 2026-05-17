@@ -232,6 +232,175 @@
     .log-time { color: rgba(255,255,255,0.18); flex-shrink: 0; }
     .log-msg  { flex: 1; word-break: break-word; }
     .log-err  { color: #f87171; }
+
+    /* ── Login screen ────────────────────────────── */
+    #loginScreen {
+      height: calc(100vh - 36px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 28px 20px;
+      gap: 14px;
+    }
+
+    #loginScreen h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.4px;
+    }
+
+    #loginScreen p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .input-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 46px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 0 16px;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-field::placeholder { color: rgba(255,255,255,0.25); }
+    .input-field:focus { border-color: rgba(108,99,255,0.6); }
+
+    #loginBtn {
+      width: 100%;
+      height: 52px;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #6c63ff 0%, #4f46e5 100%);
+      color: #fff;
+      transition: all 0.3s ease;
+      margin-top: 4px;
+    }
+
+    #loginBtn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(108,99,255,0.45);
+    }
+
+    #loginBtn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .login-error {
+      font-size: 12px;
+      color: #f87171;
+      text-align: center;
+      min-height: 16px;
+    }
+
+    #browserLoginBtn {
+      width: 100%;
+      height: 38px;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.38);
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: -4px;
+    }
+    #browserLoginBtn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); }
+
+    /* ── Subscription screen ────────────────────── */
+    #subscriptionScreen {
+      height: calc(100vh - 36px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 18px 16px;
+      gap: 12px;
+      overflow-y: auto;
+    }
+    .sub-header { text-align: center; }
+    .sub-icon { font-size: 32px; margin-bottom: 6px; }
+    .sub-header h2 { font-size: 17px; font-weight: 700; margin: 0 0 5px; }
+    .sub-header p  { font-size: 11px; color: rgba(255,255,255,0.4); margin: 0; }
+    .sub-header strong { color: rgba(255,255,255,0.75); }
+    .sub-cards { width: 100%; display: flex; gap: 10px; }
+    .sub-card {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s;
+    }
+    .sub-card:hover        { border-color: rgba(108,99,255,0.4); }
+    .sub-card.premium:hover { border-color: rgba(245,158,11,0.4); }
+    .sub-badge {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.6px; padding: 2px 8px; border-radius: 20px;
+      background: rgba(108,99,255,0.18); color: #a78bfa;
+      display: inline-block; margin-bottom: 8px; align-self: flex-start;
+    }
+    .premium-badge { background: rgba(245,158,11,0.18); color: #f59e0b; }
+    .sub-card h3  { font-size: 14px; font-weight: 700; margin: 0 0 3px; }
+    .sub-price    { font-size: 21px; font-weight: 800; margin: 0 0 2px; }
+    .sub-price span { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.4); }
+    .sub-desc   { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 10px; }
+    .sub-features {
+      list-style: none; padding: 0; margin: 0 0 12px;
+      display: flex; flex-direction: column; gap: 5px; flex: 1;
+    }
+    .sub-features li { font-size: 10px; color: rgba(255,255,255,0.55); }
+    .sub-btn {
+      width: 100%; height: 36px; border: none; border-radius: 10px;
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: all 0.2s;
+    }
+    .sub-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .trial-btn {
+      background: rgba(108,99,255,0.2); color: #c4b5fd;
+      border: 1px solid rgba(108,99,255,0.3);
+    }
+    .trial-btn:hover:not(:disabled) { background: rgba(108,99,255,0.38); }
+    .premium-btn {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #000; border: none;
+    }
+    .premium-btn:hover:not(:disabled) {
+      filter: brightness(1.1);
+      box-shadow: 0 4px 12px rgba(245,158,11,0.35);
+    }
+    .sub-error { font-size: 11px; color: #f87171; min-height: 14px; text-align: center; }
+
+    /* ── Logout ─────────────────────────────────── */
+    #app { position: relative; }
+    #logoutBtn {
+      position: absolute; bottom: 12px; right: 16px;
+      background: none; border: none;
+      font-size: 11px; color: rgba(255,255,255,0.22);
+      cursor: pointer; font-family: inherit;
+      padding: 4px 8px; border-radius: 6px; transition: color 0.2s;
+    }
+    #logoutBtn:hover { color: rgba(255,255,255,0.55); }
   </style>
 </head>
 <body>
@@ -245,8 +414,58 @@
     </div>
   </div>
 
-  <!-- App body -->
-  <div id="app">
+  <!-- Login screen -->
+  <div id="loginScreen">
+    <h2>DiplomaVPN</h2>
+    <p>Введіть дані для підключення до VPN</p>
+    <div class="input-group">
+      <input class="input-field" type="text"     id="inputUsername" placeholder="Логін"  autocomplete="username" />
+      <input class="input-field" type="password" id="inputPassword" placeholder="Пароль" autocomplete="current-password" />
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <button id="loginBtn">Увійти</button>
+    <button id="browserLoginBtn">🌐 Увійти через браузер</button>
+  </div>
+
+  <!-- Subscription selection screen -->
+  <div id="subscriptionScreen" style="display:none;">
+    <div class="sub-header">
+      <div class="sub-icon">🛡️</div>
+      <h2>Оберіть план</h2>
+      <p>Привіт, <strong id="subUsername"></strong>! Для підключення потрібна підписка.</p>
+    </div>
+    <div class="sub-cards">
+      <div class="sub-card">
+        <span class="sub-badge">Безкоштовно</span>
+        <h3>Пробний</h3>
+        <div class="sub-price">14 днів</div>
+        <div class="sub-desc">Безкоштовний доступ на 2 тижні</div>
+        <ul class="sub-features">
+          <li>✓ Необмежений трафік</li>
+          <li>✓ L2TP/IPsec шифрування</li>
+          <li>✓ Один пристрій</li>
+        </ul>
+        <button id="trialBtn" class="sub-btn trial-btn">Активувати</button>
+      </div>
+      <div class="sub-card premium">
+        <span class="sub-badge premium-badge">Популярний</span>
+        <h3>Преміум</h3>
+        <div class="sub-price">$4.99<span>/міс</span></div>
+        <div class="sub-desc">Повний необмежений доступ</div>
+        <ul class="sub-features">
+          <li>✓ Необмежений трафік</li>
+          <li>✓ Пріоритетна швидкість</li>
+          <li>✓ До 3 пристроїв</li>
+          <li>✓ Підтримка 24/7</li>
+        </ul>
+        <button id="premiumBtn" class="sub-btn premium-btn">Оформити</button>
+      </div>
+    </div>
+    <div class="sub-error" id="subError"></div>
+  </div>
+
+  <!-- App body (hidden until logged in) -->
+  <div id="app" style="display:none;">
 
     <!-- Shield icon -->
     <div class="shield-wrap">
@@ -278,7 +497,7 @@
     </div>
 
     <h1>DiplomaVPN</h1>
-    <p class="server-line">94.231.178.181 &nbsp;·&nbsp; L2TP/IPSec</p>
+    <p class="server-line" id="serverLine">… &nbsp;·&nbsp; L2TP/IPSec</p>
 
     <!-- Status card -->
     <div class="status-card">
@@ -295,6 +514,7 @@
     <!-- Log -->
     <div id="log"></div>
 
+    <button id="logoutBtn">Вийти з акаунту</button>
   </div>
 
   <script src="renderer.js"></script>

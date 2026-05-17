@@ -35,6 +35,7 @@ services:
       - ./freeradius/mods-available/sql:/etc/freeradius/mods-available/sql
       - ./freeradius/sites-available/default:/etc/freeradius/sites-available/default
       - ./freeradius/clients.conf:/etc/freeradius/clients.conf
+      - ./freeradius/mods-config/sql/mysql/queries.conf:/etc/freeradius/mods-config/sql/main/mysql/queries.conf
     networks:
       - radius_network
     depends_on:
@@ -57,28 +58,32 @@ services:
     depends_on:
       - mysql
 
-#   backend:
-#     build: ./backend
-#     container_name: radius_backend
-#     environment:
-#       NODE_ENV: development
-#       DB_HOST: mysql
-#       DB_PORT: 3306
-#       DB_USER: radius
-#       DB_PASSWORD: radiuspassword
-#       DB_NAME: radius
-#       PORT: 3000
-#     ports:
-#       - "3000:3000"
-#     volumes:
-#       - ./backend:/app
-#       - /app/node_modules
-#     networks:
-#       - radius_network
-#     depends_on:
-#       mysql:
-#         condition: service_healthy
-#     command: npm run dev
+  backend:
+    build: ./backend
+    container_name: radius_backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: radius
+      DB_PASSWORD: radiuspassword
+      DB_NAME: radius
+      PORT: 3000
+      JWT_SECRET: changeme_set_JWT_SECRET_in_env
+      VPN_SERVER: 94.231.178.181
+      VPN_NAME: DiplomaVPN
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - radius_network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: npm run dev
 
 networks:
   radius_network:

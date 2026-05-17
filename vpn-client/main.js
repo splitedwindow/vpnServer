@@ -1,17 +1,71 @@
-console.log('DEBUG process.type:', process.type, '| electron ver:', process.versions && process.versions.electron);
-const _e = require('electron');
-console.log('DEBUG typeof electron:', typeof _e, '| is object:', typeof _e === 'object');
-const { app, BrowserWindow, ipcMain } = _e;
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const { execFile } = require('child_process');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
-const VPN_NAME = 'DiplomaVPN';
-const VPN_SERVER = '94.231.178.181';
-const VPN_PSK = 'RomVPN262006!';
-const VPN_USER = 'john';
-const VPN_PASS = 'john123';
+const VPN_NAME    = 'DiplomaVPN';
+const VPN_PSK     = process.env.VPN_PSK    || 'RomVPN262006!';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000';
+
+let _vpnServerCache = null;
+async function getVpnServer() {
+  if (_vpnServerCache) return _vpnServerCache;
+  try {
+    const res  = await fetch(`${BACKEND_URL}/api/config/vpn`);
+    const data = await res.json();
+    if (data.success && data.data && data.data.server) {
+      _vpnServerCache = data.data.server;
+      return _vpnServerCache;
+    }
+  } catch (_) {}
+  return process.env.VPN_SERVER || '94.231.178.181';
+}
+
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) app.quit();
+
+app.on('second-instance', (_event, argv) => {
+  const url = argv.find(a => a.startsWith('diplomavpn://'));
+  if (url) handleDeepLink(url);
+  if (mainWindow) { mainWindow.show(); mainWindow.focus(); }
+});
+
+app.on('open-url', (event, url) => {
+  event.preventDefault();
+  handleDeepLink(url);
+});
+
+app.setAsDefaultProtocolClient('diplomavpn');
+
+function getSessionPath() {
+  return path.join(app.getPath('userData'), 'session.json');
+}
+function loadSession() {
+  try { return JSON.parse(fs.readFileSync(getSessionPath(), 'utf-8')); }
+  catch (_) { return null; }
+}
+function saveSession(data) {
+  try { fs.writeFileSync(getSessionPath(), JSON.stringify(data), 'utf-8'); }
+  catch (_) {}
+}
+function clearSession() {
+  try { fs.unlinkSync(getSessionPath()); } catch (_) {}
+}
+function handleDeepLink(url) {
+  try {
+    const u        = new URL(url);
+    const username = u.searchParams.get('user');
+    const password = u.searchParams.get('pass');
+    const token    = u.searchParams.get('token');
+    if (username && password) {
+      saveSession({ username, password, token });
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('auth:session-received', { username, password, token });
+      }
+    }
+  } catch (_) {}
+}
 
 let mainWindow = null;
 
@@ -69,16 +123,20 @@ function runRasDial(args) {
   });
 }
 
-ipcMain.handle('vpn:connect', async () => {
+ipcMain.handle('vpn:connect', async (_event, { username, password } = {}) => {
+  if (!username || !password) {
+    return { success: false, error: 'Введіть логін та пароль' };
+  }
   try {
     sendState('Connecting', 'Налаштування VPN профілю...');
 
+    const vpnServer = await getVpnServer();
     await runPS(`
 $conn = Get-VpnConnection -Name '${VPN_NAME}' -ErrorAction SilentlyContinue
 if (-not $conn) {
   Add-VpnConnection \`
     -Name '${VPN_NAME}' \`
-    -ServerAddress '${VPN_SERVER}' \`
+    -ServerAddress '${vpnServer}' \`
     -TunnelType L2tp \`
     -L2tpPsk '${VPN_PSK}' \`
     -AuthenticationMethod MSChapv2 \`
@@ -89,7 +147,7 @@ if (-not $conn) {
 `);
 
     sendState('Connecting', 'Встановлення з\'єднання...');
-    await runRasDial([VPN_NAME, VPN_USER, VPN_PASS]);
+    await runRasDial([VPN_NAME, username, password]);
 
     sendState('Connected', 'Підключено до VPN');
     return { success: true };
@@ -110,6 +168,12 @@ ipcMain.handle('vpn:disconnect', async () => {
     return { success: false, error: err.message };
   }
 });
+
+ipcMain.handle('auth:load',          ()      => loadSession());
+ipcMain.handle('auth:save',          (_, d)  => { saveSession(d); return true; });
+ipcMain.handle('auth:clear',         ()      => { clearSession(); return true; });
+ipcMain.handle('auth:open-browser',  ()      => shell.openExternal(`${BACKEND_URL}/login`));
+ipcMain.handle('config:backend-url', ()      => BACKEND_URL);
 
 ipcMain.handle('vpn:status', async () => {
   try {

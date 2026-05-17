@@ -59,7 +59,7 @@ router.get('/me', requireAuth, async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
-    res.json({ success: true, data: { username: user.username, password: user.value } });
+    res.json({ success: true, data: { username: user.username } });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

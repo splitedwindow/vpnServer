@@ -18,6 +18,12 @@
       "index.html",
       "package.json"
     ],
+    "protocols": [
+      {
+        "name": "DiplomaVPN",
+        "schemes": ["diplomavpn"]
+      }
+    ],
     "win": {
       "target": [
         {
