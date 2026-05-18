@@ -402,6 +402,49 @@
     }
     #logoutBtn:hover { color: rgba(255,255,255,0.55); }
 
+    /* ── VPN Password Prompt ─────────────────────── */
+    #vpnPassPrompt {
+      display: none;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 0 0 12px;
+      text-align: left;
+    }
+    #vpnPassPrompt p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+    }
+    #vpnPassPrompt .vpn-pass-row {
+      display: flex;
+      gap: 8px;
+    }
+    #vpnPassInput {
+      flex: 1;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 9px;
+      color: #fff;
+      font-size: 13px;
+      padding: 8px 12px;
+      font-family: inherit;
+      outline: none;
+    }
+    #vpnPassInput:focus { border-color: rgba(108,99,255,0.5); }
+    #vpnPassBtn {
+      background: linear-gradient(135deg, #6c63ff, #4f46e5);
+      border: none;
+      border-radius: 9px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 0 16px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
     /* ── Update banner ──────────────────────────── */
     #updateBanner {
       display: none;
@@ -452,7 +495,7 @@
     </div>
     <div class="login-error" id="loginError"></div>
     <button id="loginBtn">Увійти</button>
-    <button id="browserLoginBtn">🌐 Увійти через браузер</button>
+    <!-- <button id="browserLoginBtn">🌐 Увійти через браузер</button> -->
   </div>
 
   <!-- Subscription selection screen -->
@@ -533,6 +576,15 @@
       <div class="status-texts">
         <div class="status-main" id="statusMain">Відключено</div>
         <div class="status-sub"  id="statusSub">Натисніть «Підключитись», щоб почати</div>
+      </div>
+    </div>
+
+    <!-- VPN password prompt (shows only after browser login without cached password) -->
+    <div id="vpnPassPrompt">
+      <p>Введіть ваш VPN пароль для першого підключення</p>
+      <div class="vpn-pass-row">
+        <input type="password" id="vpnPassInput" placeholder="Пароль" />
+        <button id="vpnPassBtn">OK</button>
       </div>
     </div>
 

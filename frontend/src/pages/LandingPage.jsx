@@ -1,6 +1,7 @@
 import { Download, Zap, Globe, Lock, ChevronRight } from 'lucide-react'
 
-const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL || '#'
+const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL
+  || 'https://github.com/splitedwindow/vpnServer/releases/latest'
 
 const features = [
   {

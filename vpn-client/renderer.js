@@ -167,10 +167,10 @@ inputPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginB
 
 browserLoginBtn.addEventListener('click', () => window.auth.openBrowser());
 
-window.auth.onSessionReceived(async ({ username, password, token }) => {
+window.auth.onSessionReceived(async ({ username, token }) => {
   currentUsername = username;
-  currentPassword = password;
   currentToken    = token;
+  await window.auth.save({ username, token });
   await checkSubscription();
 });
 
@@ -194,20 +194,48 @@ trialBtn.addEventListener('click', async () => {
 
 premiumBtn.addEventListener('click', () => window.auth.openBrowser());
 
+const vpnPassPrompt = document.getElementById('vpnPassPrompt');
+const vpnPassInput  = document.getElementById('vpnPassInput');
+const vpnPassBtn    = document.getElementById('vpnPassBtn');
+
+async function doConnect() {
+  if (isBusy) return;
+  if (!currentPassword) {
+    vpnPassPrompt.style.display = 'block';
+    vpnPassInput.focus();
+    return;
+  }
+  isBusy = true;
+  addLog('Ініціалізація підключення...');
+  const res = await window.vpn.connect(currentUsername, currentPassword);
+  if (!res.success) { addLog(res.error, true); applyState('Disconnected'); }
+  isBusy = false;
+}
+
 mainBtn.addEventListener('click', async () => {
   if (isBusy) return;
-  isBusy = true;
   if (!isConnected) {
-    addLog('Ініціалізація підключення...');
-    const res = await window.vpn.connect(currentUsername, currentPassword);
-    if (!res.success) { addLog(res.error, true); applyState('Disconnected'); }
+    await doConnect();
   } else {
+    isBusy = true;
     addLog('Відключення...');
     const res = await window.vpn.disconnect();
     if (!res.success) { addLog(res.error, true); applyState('Disconnected'); }
+    isBusy = false;
   }
-  isBusy = false;
 });
+
+vpnPassBtn.addEventListener('click', async () => {
+  const pwd = vpnPassInput.value;
+  if (!pwd) return;
+  currentPassword = pwd;
+  await window.auth.save({ username: currentUsername, token: currentToken, password: currentPassword });
+  vpnPassPrompt.style.display = 'none';
+  vpnPassInput.value = '';
+  await doConnect();
+});
+
+vpnPassInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') vpnPassBtn.click(); });
 
 window.vpn.onState(({ state, message }) => {
   applyState(state, message);
@@ -235,9 +263,9 @@ async function init() {
   } catch (_) {}
 
   const session = await window.auth.load();
-  if (session && session.username && session.password) {
+  if (session && session.username) {
     currentUsername = session.username;
-    currentPassword = session.password;
+    currentPassword = session.password || '';
     currentToken    = session.token || '';
     await checkSubscription();
   } else {

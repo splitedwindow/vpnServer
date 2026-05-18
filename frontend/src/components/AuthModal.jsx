@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
-export default function AuthModal({ onClose }) {
+export default function AuthModal({ onClose, onSuccess = null }) {
   const [tab, setTab] = useState('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -22,10 +22,14 @@ export default function AuthModal({ onClose }) {
 
     setLoading(true)
     try {
+      let userData
       if (tab === 'login') {
-        await login(username, password)
+        userData = await login(username, password)
       } else {
-        await register(username, password)
+        userData = await register(username, password)
+      }
+      if (onSuccess) {
+        onSuccess(userData.token)
       }
       onClose()
     } catch (err) {

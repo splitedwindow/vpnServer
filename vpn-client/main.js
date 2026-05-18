@@ -1,16 +1,25 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
-const { autoUpdater } = require('electron-updater');
 const { execFile } = require('child_process');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+const crypto = require('crypto');
 
-autoUpdater.autoDownload = true;
-autoUpdater.autoInstallOnAppQuit = true;
+let autoUpdater;
+try {
+  autoUpdater = require('electron-updater').autoUpdater;
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+} catch (_) {
+  autoUpdater = { on: () => {}, checkForUpdatesAndNotify: () => {}, quitAndInstall: () => {} };
+}
 
-const VPN_NAME    = 'DiplomaVPN';
-const VPN_PSK     = process.env.VPN_PSK    || 'RomVPN262006!';
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000';
+const VPN_NAME     = 'DiplomaVPN';
+const VPN_PSK      = process.env.VPN_PSK      || 'RomVPN262006!';
+const BACKEND_URL  = process.env.BACKEND_URL  || 'http://localhost:3000';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+let _pendingAuthState = null;
 
 let _vpnServerCache = null;
 async function getVpnServer() {
@@ -56,16 +65,23 @@ function saveSession(data) {
 function clearSession() {
   try { fs.unlinkSync(getSessionPath()); } catch (_) {}
 }
-function handleDeepLink(url) {
+async function handleDeepLink(url) {
   try {
-    const u        = new URL(url);
-    const username = u.searchParams.get('user');
-    const password = u.searchParams.get('pass');
-    const token    = u.searchParams.get('token');
-    if (username && password) {
-      saveSession({ username, password, token });
+    const u     = new URL(url);
+    const code  = u.searchParams.get('code');
+    const state = u.searchParams.get('state');
+    if (!code || !_pendingAuthState || state !== _pendingAuthState) return;
+    _pendingAuthState = null;
+    const res  = await fetch(`${BACKEND_URL}/api/auth/exchange`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ code }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      saveSession({ username: data.username, token: data.token });
       if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('auth:session-received', { username, password, token });
+        mainWindow.webContents.send('auth:session-received', { username: data.username, token: data.token });
       }
     }
   } catch (_) {}
@@ -204,7 +220,11 @@ ipcMain.handle('vpn:disconnect', async () => {
 ipcMain.handle('auth:load',          ()      => loadSession());
 ipcMain.handle('auth:save',          (_, d)  => { saveSession(d); return true; });
 ipcMain.handle('auth:clear',         ()      => { clearSession(); return true; });
-ipcMain.handle('auth:open-browser',  ()      => shell.openExternal(`${BACKEND_URL}/login`));
+ipcMain.handle('auth:open-browser',  ()      => {
+  _pendingAuthState = crypto.randomUUID();
+  const url = `${FRONTEND_URL}?electron_auth=1&state=${encodeURIComponent(_pendingAuthState)}`;
+  shell.openExternal(url);
+});
 ipcMain.handle('config:backend-url', ()      => BACKEND_URL);
 
 ipcMain.handle('vpn:status', async () => {

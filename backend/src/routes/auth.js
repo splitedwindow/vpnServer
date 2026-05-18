@@ -1,8 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const AuthLog = require('../models/AuthLog');
 const User = require('../models/User');
+
+const authCodes = new Map();
+function cleanExpiredCodes() {
+  const now = Date.now();
+  for (const [code, data] of authCodes) {
+    if (data.expiresAt < now) authCodes.delete(code);
+  }
+}
 
 const JWT_SECRET = process.env.JWT_SECRET || 'changeme_set_JWT_SECRET_in_env';
 
@@ -93,6 +102,24 @@ router.get('/failed', async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+router.post('/electron-init', requireAuth, (req, res) => {
+  cleanExpiredCodes();
+  const code = crypto.randomUUID();
+  authCodes.set(code, { username: req.user.username, expiresAt: Date.now() + 60_000 });
+  res.json({ success: true, code });
+});
+
+router.post('/exchange', (req, res) => {
+  const { code } = req.body;
+  if (!code) return res.status(400).json({ success: false, error: 'Code required' });
+  cleanExpiredCodes();
+  const data = authCodes.get(code);
+  if (!data) return res.status(401).json({ success: false, error: 'Invalid or expired code' });
+  authCodes.delete(code);
+  const token = jwt.sign({ username: data.username }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ success: true, token, username: data.username });
 });
 
 module.exports = router;
