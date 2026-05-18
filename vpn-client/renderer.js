@@ -165,7 +165,7 @@ loginBtn.addEventListener('click', async () => {
 
 inputPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginBtn.click(); });
 
-browserLoginBtn.addEventListener('click', () => window.auth.openBrowser());
+if (browserLoginBtn) browserLoginBtn.addEventListener('click', () => window.auth.openBrowser());
 
 window.auth.onSessionReceived(async ({ username, token }) => {
   currentUsername = username;
