@@ -17,7 +17,6 @@ const inputUsername      = document.getElementById('inputUsername');
 const inputPassword      = document.getElementById('inputPassword');
 const loginBtn           = document.getElementById('loginBtn');
 const loginError         = document.getElementById('loginError');
-const browserLoginBtn    = document.getElementById('browserLoginBtn');
 const trialBtn           = document.getElementById('trialBtn');
 const premiumBtn         = document.getElementById('premiumBtn');
 const subError           = document.getElementById('subError');
@@ -164,8 +163,6 @@ loginBtn.addEventListener('click', async () => {
 });
 
 inputPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginBtn.click(); });
-
-if (browserLoginBtn) browserLoginBtn.addEventListener('click', () => window.auth.openBrowser());
 
 window.auth.onSessionReceived(async ({ username, token }) => {
   currentUsername = username;
