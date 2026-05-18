@@ -32,7 +32,7 @@ let isBusy          = false;
 let currentUsername = '';
 let currentPassword = '';
 let currentToken    = '';
-let backendUrl      = 'http://localhost:3000';
+let backendUrl      = 'http://94.231.178.180:3000';
 
 function addLog(msg, isErr) {
   const time = new Date().toLocaleTimeString();
