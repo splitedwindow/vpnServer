@@ -16,7 +16,7 @@ try {
 
 const VPN_NAME     = 'DiplomaVPN';
 const VPN_PSK      = process.env.VPN_PSK      || '';
-const BACKEND_URL  = process.env.BACKEND_URL  || 'http://localhost:3000';
+const BACKEND_URL  = process.env.BACKEND_URL  || 'http://94.231.178.180:3000';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 let _pendingAuthState = null;
