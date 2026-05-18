@@ -1,4 +1,10 @@
 const { pool } = require('../config/database');
+const md4 = require('js-md4');
+
+function ntHash(password) {
+  const buf = Buffer.from(password, 'utf16le');
+  return md4(buf).toUpperCase();
+}
 
 class User {
   static async getAll() {
@@ -29,6 +35,11 @@ class User {
       await connection.query(
         'INSERT INTO radcheck (username, attribute, op, value) VALUES (?, "Cleartext-Password", ":=", ?)',
         [username, password]
+      );
+
+      await connection.query(
+        'INSERT INTO radcheck (username, attribute, op, value) VALUES (?, "NT-Password", ":=", ?)',
+        [username, ntHash(password)]
       );
 
       await connection.query(
