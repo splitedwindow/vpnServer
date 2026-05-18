@@ -29,6 +29,12 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
 
+          # Build frontend
+          cd frontend
+          npm install --legacy-peer-deps
+          npm run build
+          cd ..
+
           # Write .env from secrets passed via environment
           cat > .env <<ENVEOF
           DB_HOST=mysql
