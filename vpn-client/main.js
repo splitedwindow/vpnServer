@@ -15,7 +15,7 @@ try {
 }
 
 const VPN_NAME     = 'DiplomaVPN';
-const VPN_PSK      = process.env.VPN_PSK      || 'RomVPN262006!';
+const VPN_PSK      = process.env.VPN_PSK      || '';
 const BACKEND_URL  = process.env.BACKEND_URL  || 'http://localhost:3000';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 

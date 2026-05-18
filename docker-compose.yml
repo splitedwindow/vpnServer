@@ -71,7 +71,7 @@ services:
       DB_NAME: radius
       PORT: 3000
       JWT_SECRET: changeme_set_JWT_SECRET_in_env
-      VPN_SERVER: 94.231.178.181
+      VPN_SERVER: ${VPN_SERVER:-your-vpn-server-ip}
       VPN_NAME: DiplomaVPN
     ports:
       - "3000:3000"
