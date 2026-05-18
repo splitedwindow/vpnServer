@@ -246,3 +246,23 @@ async function init() {
 }
 
 init();
+
+const updateBanner    = document.getElementById('updateBanner');
+const updateBannerText = document.getElementById('updateBannerText');
+const updateBannerBtn  = document.getElementById('updateBannerBtn');
+
+window.updater.onStatus(({ event, version, percent }) => {
+  if (event === 'available') {
+    updateBannerText.textContent = `⬇ Завантаження оновлення v${version}…`;
+    updateBanner.style.display = 'flex';
+    updateBannerBtn.style.display = 'none';
+  } else if (event === 'progress') {
+    updateBannerText.textContent = `⬇ Завантаження оновлення… ${percent}%`;
+  } else if (event === 'downloaded') {
+    updateBannerText.textContent = `✓ Оновлення v${version} готове до встановлення`;
+    updateBannerBtn.style.display = '';
+    updateBanner.style.display = 'flex';
+  }
+});
+
+updateBannerBtn.addEventListener('click', () => window.updater.installNow());

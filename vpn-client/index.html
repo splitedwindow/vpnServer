@@ -401,6 +401,34 @@
       padding: 4px 8px; border-radius: 6px; transition: color 0.2s;
     }
     #logoutBtn:hover { color: rgba(255,255,255,0.55); }
+
+    /* ── Update banner ──────────────────────────── */
+    #updateBanner {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(90deg, #4f46e5, #6c63ff);
+      padding: 9px 14px;
+      font-size: 12px;
+      color: #fff;
+      align-items: center;
+      gap: 10px;
+      z-index: 999;
+    }
+    #updateBanner span { flex: 1; }
+    #updateBannerBtn {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    #updateBannerBtn:hover { background: rgba(255,255,255,0.3); }
   </style>
 </head>
 <body>
@@ -515,6 +543,12 @@
     <div id="log"></div>
 
     <button id="logoutBtn">Вийти з акаунту</button>
+  </div>
+
+  <!-- Update notification banner -->
+  <div id="updateBanner">
+    <span id="updateBannerText">Доступне оновлення…</span>
+    <button id="updateBannerBtn">Встановити</button>
   </div>
 
   <script src="renderer.js"></script>

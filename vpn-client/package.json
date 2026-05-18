@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "start:mac": "open -a \"$(pwd)/node_modules/electron/dist/Electron.app\" --args \"$(pwd)\"",
-    "build": "electron-builder --win --x64"
+    "build": "electron-builder --win --x64",
+    "dist":  "electron-builder --win --x64 --publish always"
   },
   "build": {
     "appId": "com.diplomavpn.client",
@@ -24,6 +25,11 @@
         "schemes": ["diplomavpn"]
       }
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "YOUR_GITHUB_USERNAME",
+      "repo": "diplomaVPN"
+    },
     "win": {
       "target": [
         {
@@ -40,6 +46,9 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "electron": "^25.9.8",

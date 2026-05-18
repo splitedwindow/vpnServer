@@ -9,6 +9,11 @@ contextBridge.exposeInMainWorld('vpn', {
   close: () => ipcRenderer.send('win:close'),
 });
 
+contextBridge.exposeInMainWorld('updater', {
+  onStatus:   (cb) => ipcRenderer.on('updater:status', (_, d) => cb(d)),
+  installNow: ()   => ipcRenderer.send('updater:install-now'),
+});
+
 contextBridge.exposeInMainWorld('auth', {
   load:              ()      => ipcRenderer.invoke('auth:load'),
   save:              (data)  => ipcRenderer.invoke('auth:save', data),

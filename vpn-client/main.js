@@ -1,8 +1,12 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const { execFile } = require('child_process');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+
+autoUpdater.autoDownload = true;
+autoUpdater.autoInstallOnAppQuit = true;
 
 const VPN_NAME    = 'DiplomaVPN';
 const VPN_PSK     = process.env.VPN_PSK    || 'RomVPN262006!';
@@ -69,6 +73,27 @@ function handleDeepLink(url) {
 
 let mainWindow = null;
 
+function setupUpdater() {
+  autoUpdater.on('checking-for-update', () => {
+    mainWindow?.webContents.send('updater:status', { event: 'checking' });
+  });
+  autoUpdater.on('update-available', (info) => {
+    mainWindow?.webContents.send('updater:status', { event: 'available', version: info.version });
+  });
+  autoUpdater.on('update-not-available', () => {
+    mainWindow?.webContents.send('updater:status', { event: 'not-available' });
+  });
+  autoUpdater.on('download-progress', (p) => {
+    mainWindow?.webContents.send('updater:status', { event: 'progress', percent: Math.round(p.percent) });
+  });
+  autoUpdater.on('update-downloaded', (info) => {
+    mainWindow?.webContents.send('updater:status', { event: 'downloaded', version: info.version });
+  });
+  autoUpdater.on('error', (err) => {
+    mainWindow?.webContents.send('updater:status', { event: 'error', message: err.message });
+  });
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 380,
@@ -85,11 +110,18 @@ function createWindow() {
   mainWindow.loadFile('index.html');
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+  setupUpdater();
+  if (app.isPackaged) {
+    setTimeout(() => autoUpdater.checkForUpdates(), 3000);
+  }
+});
 app.on('window-all-closed', () => app.quit());
 
 ipcMain.on('win:minimize', () => mainWindow && mainWindow.minimize());
 ipcMain.on('win:close', () => mainWindow && mainWindow.close());
+ipcMain.on('updater:install-now', () => autoUpdater.quitAndInstall());
 
 function sendState(state, message) {
   if (mainWindow && !mainWindow.isDestroyed()) {

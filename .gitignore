@@ -47,3 +47,6 @@ freeradius/clients.conf
 
 # Keep templates for reference
 !freeradius/clients.conf.template
+
+#personal files to ignore
+non-code-related 
