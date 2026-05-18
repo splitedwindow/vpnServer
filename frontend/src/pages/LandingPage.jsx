@@ -1,7 +1,7 @@
 import { Download, Zap, Globe, Lock, ChevronRight } from 'lucide-react'
 
 const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL
-  || 'https://github.com/splitedwindow/vpnServer/releases/latest'
+  || 'https://github.com/splitedwindow/vpnServer/releases/latest/download/DiplomaVPN-Setup-1.0.0.exe'
 
 const features = [
   {
@@ -85,6 +85,7 @@ export default function LandingPage({ onLoginClick }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <a
             href={DOWNLOAD_URL}
+            download="DiplomaVPN-Setup.exe"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
