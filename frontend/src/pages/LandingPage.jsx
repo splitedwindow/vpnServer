@@ -1,7 +1,7 @@
 import { Download, Zap, Globe, Lock, ChevronRight } from 'lucide-react'
 
 const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL
-  || 'https://github.com/splitedwindow/vpnServer/releases/latest/download/DiplomaVPN-Setup-1.0.0.exe'
+  || 'https://github.com/splitedwindow/vpnServer/releases/latest/download/DiplomaVPN-Setup-1.0.1.exe'
 
 const features = [
   {

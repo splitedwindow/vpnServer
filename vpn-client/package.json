@@ -1,6 +1,6 @@
 {
   "name": "diploma-vpn",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "VPN Client for DiplomaVPN",
   "main": "main.js",
   "scripts": {
