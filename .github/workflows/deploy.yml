@@ -35,7 +35,8 @@ jobs:
           npm install --legacy-peer-deps
           npm run build
           cd ..
-          chmod -R o+rx /home/rom /home/rom/diplomavpn /home/rom/diplomavpn/frontend/dist
+          chmod o+rx /home/rom /home/rom/diplomavpn
+          chmod -R o+rx /home/rom/diplomavpn/frontend/dist
 
           # Write .env from secrets passed via environment
           cat > .env <<ENVEOF
