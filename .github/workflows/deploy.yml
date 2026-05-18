@@ -24,7 +24,7 @@ jobs:
             "JWT_SECRET='${JWT_SECRET}' DB_PASSWORD='${DB_PASSWORD}' VPN_SERVER='${VPN_SERVER}' VPN_PSK='${VPN_PSK}' bash -s" <<'EOF'
 
           set -e
-          cd ~/diplomavpn
+          cd /home/rom/diplomavpn
 
           git fetch origin main
           git reset --hard origin/main
@@ -34,6 +34,7 @@ jobs:
           npm install --legacy-peer-deps
           npm run build
           cd ..
+          chmod -R o+rx /home/rom /home/rom/diplomavpn /home/rom/diplomavpn/frontend/dist
 
           # Write .env from secrets passed via environment
           cat > .env <<ENVEOF
