@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Copy, Check, Download, Shield, Clock } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
-const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL || '#'
+const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL
+  || 'https://github.com/splitedwindow/vpnServer/releases/latest/download/DiplomaVPN-Setup-1.0.0.exe'
 
 const cardStyle = {
   background: 'rgba(255,255,255,0.04)',
@@ -156,6 +157,7 @@ export default function Dashboard() {
             </p>
             <a
               href={DOWNLOAD_URL}
+              download="DiplomaVPN-Setup.exe"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
