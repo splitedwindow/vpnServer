@@ -26,6 +26,7 @@ jobs:
           set -e
           cd /home/rom/diplomavpn
 
+          git remote set-url origin https://github.com/splitedwindow/vpnServer.git
           git fetch origin main
           git reset --hard origin/main
 
