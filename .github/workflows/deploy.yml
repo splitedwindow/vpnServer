@@ -3,43 +3,53 @@ name: Deploy
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-    types: [ closed ]
 
 jobs:
   deploy:
-    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Copy SSH key
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to server
+        env:
+          JWT_SECRET:   ${{ secrets.JWT_SECRET }}
+          DB_PASSWORD:  ${{ secrets.DB_PASSWORD }}
+          VPN_SERVER:   ${{ secrets.VPN_SERVER }}
+          VPN_PSK:      ${{ secrets.VPN_PSK }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER_NAME }}@${{ secrets.SSH_SERVER_IP }} <<'EOF'
-          cd diplomavpn
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER_NAME }}@${{ secrets.SSH_SERVER_IP }} \
+            "JWT_SECRET='${JWT_SECRET}' DB_PASSWORD='${DB_PASSWORD}' VPN_SERVER='${VPN_SERVER}' VPN_PSK='${VPN_PSK}' bash -s" <<'EOF'
+
+          set -e
+          cd ~/diplomavpn
+
           git fetch origin main
           git reset --hard origin/main
 
-          # Stop all services
-          docker-compose down
- 
-          # Rebuild and start services
-          docker-compose up -d --build
- 
-          # Wait for services to be healthy
-          sleep 10
- 
-          # Verify deployment
-          docker-compose ps
-          docker logs --tail 20 freeradius
-          
+          # Write .env from secrets passed via environment
+          cat > .env <<ENVEOF
+          DB_HOST=mysql
+          DB_PORT=3306
+          DB_USER=radius
+          DB_PASSWORD=${DB_PASSWORD}
+          DB_NAME=radius
+          PORT=3000
+          JWT_SECRET=${JWT_SECRET}
+          VPN_SERVER=${VPN_SERVER}
+          VPN_NAME=DiplomaVPN
+          VPN_PSK=${VPN_PSK}
+          ENVEOF
+
+          # Rebuild and restart
+          docker compose down
+          docker compose up -d --build
+
+          # Verify
+          sleep 8
+          docker compose ps
           echo "Deployment complete!"
-          
+
           EOF
