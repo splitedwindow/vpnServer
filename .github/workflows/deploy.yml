@@ -54,8 +54,11 @@ jobs:
           docker compose down
           docker compose up -d --build
 
+          # Wait for MySQL to be ready, then ensure schema exists
+          sleep 12
+          docker exec -i radius_mysql mysql -u radius -pradiuspassword radius < /home/rom/diplomavpn/mysql/init.sql
+
           # Verify
-          sleep 8
           docker compose ps
           echo "Deployment complete!"
 
